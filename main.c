@@ -26,6 +26,7 @@ struct ResultadoRecomendacao {
   float energia_restante;
 };
 
+
 // Função para fazer a alocação dinâmica com malloc e com um parâmetro pra definir a capacidade inicial do vetor
 void iniciarGerenciadorDeDispositivos(struct GerenciadorDeDispositivos *gerenciador, int capacidade_inicial) {
   gerenciador->dispositivos = malloc(capacidade_inicial * sizeof(struct Dispositivo));
@@ -40,6 +41,7 @@ void iniciarGerenciadorDeDispositivos(struct GerenciadorDeDispositivos *gerencia
   gerenciador->quantidade = 0;
 }
 
+
 // Função para inicializar o resultado da recomendação
 void iniciarResultadoRecomendacao(struct ResultadoRecomendacao *resultado, int capacidade) {
   resultado->dispositivos_ligados = malloc(capacidade * sizeof(int));
@@ -49,6 +51,7 @@ void iniciarResultadoRecomendacao(struct ResultadoRecomendacao *resultado, int c
   resultado->consumo_total=0.0;
   resultado->energia_restante=0.0;
 }
+
 
 // Função para redimensionar o vetor caso seja necessário
 void redimensionador(struct GerenciadorDeDispositivos *gerenciador) {
@@ -65,6 +68,7 @@ void redimensionador(struct GerenciadorDeDispositivos *gerenciador) {
   }
 }
 
+
 // Função para liberar a memória alocada do gerenciador de dispositivos
 void liberarMemoriaGerendiadorDeDispositivos(struct GerenciadorDeDispositivos *gerenciador) {
   free(gerenciador->dispositivos);
@@ -73,6 +77,7 @@ void liberarMemoriaGerendiadorDeDispositivos(struct GerenciadorDeDispositivos *g
   gerenciador->quantidade = 0;
 }
 
+
 // Função para liberar a memória alocada do sistema de recomendações
 void liberarMemoriaSistemaDeRecomendacoes(struct ResultadoRecomendacao *resultado) {
   free(resultado->dispositivos_ligados);
@@ -80,6 +85,7 @@ void liberarMemoriaSistemaDeRecomendacoes(struct ResultadoRecomendacao *resultad
   resultado->dispositivos_ligados == NULL;
   resultado->dispositivos_desligados == NULL;
 }
+
 
 // Função para cadastrar dispositivos
 void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
@@ -126,6 +132,7 @@ void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
     printf("\n===== DISPOSITIVO CADASTRADO COM SUCESSO =====\n");
 }
 
+
 // Função para exibir os dispositivos cadastrados
 void exibirDispositivos(const struct GerenciadorDeDispositivos *gerenciador) {
   printf("\n===============================================\n");
@@ -134,7 +141,7 @@ void exibirDispositivos(const struct GerenciadorDeDispositivos *gerenciador) {
 
   // Verificando se há dispositivos cadastrados
   if(gerenciador->quantidade == 0) {
-    printf("\nNenhum dispositivo cadastrado\n");
+    printf("\nNão há nenhum dispositivo cadastrado\n");
     return;
   }
 
@@ -157,6 +164,52 @@ void exibirDispositivos(const struct GerenciadorDeDispositivos *gerenciador) {
 }
 
 
+// Função para exibir os resultados da recomendação
+void exibirResultadosRecomendacao(const struct ResultadoRecomendacao *resultado, const struct GerenciadorDeDispositivos *gerenciador, float energia_disponivel) {
+  printf("\n==============================================\n");
+  printf("         RESULTADO DA RECOMENDAÇÃO             \n");
+  printf("==============================================\n");
+
+  printf("\nEnergia disponível: %.2f kWh\n", energia_disponivel);
+
+  printf("\nDispositivos recomendados para se manter ligados:\n");
+  if (resultado->quantidade_ligados == 0) {
+    printf("Nenhum dispositivo pode ser mantido ligado.\n");
+  } else {
+    for (int i = 0; i < resultado->quantidade_ligados; i++) {
+      int indice = resultado->dispositivos_ligados[i];
+      printf("- %s (%.2f kWh) - Prioridade %d\n",
+      gerenciador->dispositivos[indice].nome,
+      gerenciador->dispositivos[indice].consumo_estimado,
+      gerenciador->dispositivos[indice].prioridade);
+    }
+  }
+
+  printf("\nDispositivos recomendados para serem desligados:\n");
+  if (resultado->quantidade_desligados == 0) {
+    printf("Todos os dispositivos podem permanecer ligados!\n");
+  } else {
+    for (int i = 0; i < resultado->quantidade_desligados; i++) {
+      int indice = resultado->dispositivos_desligados[i];
+      printf(" - %s (%.2f kWh) - Prioridade %d\n",
+        gerenciador->dispositivos[indice].nome,
+        gerenciador->dispositivos[indice].consumo_estimado,
+        gerenciador->dispositivos[indice].prioridade
+      );
+    }
+  }
+
+  printf("\nResumo:\n");
+  printf(" - Consumo total dos dispositivos ligados: %.2f kWh\n", resultado->consumo_total);
+  printf(" - Energia restante: %.2f kWh\n", resultado->energia_restante);
+  printf(" - Eficiência energética: %.1f%%\n", (resultado->consumo_total / energia_disponivel) * 100);
+
+  if (resultado->energia_restante > 0) {
+    printf("\nVocê ainda tem %.2f kWh disponíveis\n", resultado->energia_restante);
+  }
+}
+
+
 // Função para trocar dois dispositivos de posição
 void trocarDispositivos(struct Dispositivo *a, struct Dispositivo *b) {
   struct Dispositivo temp = *a;
@@ -164,10 +217,12 @@ void trocarDispositivos(struct Dispositivo *a, struct Dispositivo *b) {
   *b = temp;
 }
 
+
 // Função para ordenar dispositivos por prioridade usando bubble sort
 void ordenarDispositivosPorPrioridade(struct GerenciadorDeDispositivos *gerenciador) {
   // Se não houver dispositivos cadastrados a ordenação não é feita
   if (gerenciador->quantidade <= 1) {
+    printf("\nNão há nenhum dispositivo cadastrado\n");
     return;
   }
 
@@ -185,6 +240,7 @@ void ordenarDispositivosPorPrioridade(struct GerenciadorDeDispositivos *gerencia
     }
   }
 }
+
 
 // Função do sistema de recomendação inteligente
 void sistemaRecomendacaoInteligente(struct GerenciadorDeDispositivos *gerenciador) {
@@ -212,7 +268,7 @@ void sistemaRecomendacaoInteligente(struct GerenciadorDeDispositivos *gerenciado
   }
 
   // Usando a função para ordenar os dispositivos por ordem de prioridade
-  ordenarDispositivosPorPrioridade(&gerenciador);
+  ordenarDispositivosPorPrioridade(gerenciador);
 
   // Inicializar resultado
   struct ResultadoRecomendacao resultado;
@@ -246,53 +302,9 @@ void sistemaRecomendacaoInteligente(struct GerenciadorDeDispositivos *gerenciado
 
   // Liberar memória
   free(indices);
-  liberarResultadoRecomendacao(&resultado);
+  liberarMemoriaSistemaDeRecomendacoes(&resultado);
 }
 
-// Função para exibir os resultados da recomendação
-void exibirResultadosRecomendacao(const struct ResultadoRecomendacao *resultado, const struct GerenciadorDeDispositivos *gerenciador, float energia_disponivel) {
-  printf("\n==============================================\n");
-  printf("         RESULTADO DA RECOMENDAÇÃO             \n");
-  printf("==============================================\n");
-
-  printf("\nEnergia disponível: %.2f kWh\n", energia_disponivel);
-
-  printf("\nDispositivos recomendados para se manter ligados:\n");
-  if (resultado->quantidade_ligados == 0) {
-    printf("Nenhum dispositivo pode ser mantido ligado.\n");
-  } else {
-    for (int i = 0; i < resultado->quantidade_ligados; i++) {
-      int indice = resultado->dispositivos_ligados[i];
-      printf("   • %s (%.2f kWh) - Prioridade %d\n",
-      gerenciador->dispositivos[indice].nome,
-      gerenciador->dispositivos[indice].consumo_estimado,
-      gerenciador->dispositivos[indice].prioridade);
-    }
-  }
-
-  printf("\nDispositivos recomendados para serem desligados:\n");
-  if (resultado->quantidade_desligados == 0) {
-    printf("Todos os dispositivos podem permanecer ligados!\n");
-  } else {
-    for (int i = 0; i < resultado->quantidade_desligados; i++) {
-      int indice = resultado->dispositivos_desligados[i];
-      printf("   • %s (%.2f kWh) - Prioridade %d\n",
-        gerenciador->dispositivos[indice].nome,
-        gerenciador->dispositivos[indice].consumo_estimado,
-        gerenciador->dispositivos[indice].prioridade
-      );
-    }
-  }
-
-  printf("\nResumo:\n");
-  printf(" - Consumo total dos dispositivos ligados: %.2f kWh\n", resultado->consumo_total);
-  printf(" - Energia restante: %.2f kWh\n", resultado->energia_restante);
-  printf(" - Eficiência energética: %.1f%%\n", (resultado->consumo_total / energia_disponivel) * 100);
-
-  if (resultado->energia_restante > 0) {
-    printf("\nVocê ainda tem %.2f kWh disponíveis\n", resultado->energia_restante);
-  }
-}
 
 int main() {
   int menu_option;
@@ -309,6 +321,7 @@ int main() {
     printf("\n1 - Cadastrar dispositivo\n");
     printf("2 - Exibir dispositivos cadastrados\n");
     printf("3 - Ordenar dispositivos por prioridade\n");
+    printf("4 - Sistema de recomendação inteligente\n");
     printf("0 - Sair\n");
 
     scanf("%d", &menu_option);
@@ -323,6 +336,9 @@ int main() {
         break;
       case 3:
         ordenarDispositivosPorPrioridade(&gerenciador);
+        break;
+      case 4:
+        sistemaRecomendacaoInteligente(&gerenciador);
         break;
       case 0:
         printf("Encerrando o sistema. Até breve!\n");
