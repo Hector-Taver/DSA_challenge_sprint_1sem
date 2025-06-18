@@ -86,8 +86,8 @@ void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
     while(1) {
       fgets(buffer, sizeof(buffer), stdin);
 
-      // Verificnado se é possível encontrar um valor do tipo int e se o valor é maior ou igual à 1 ou menor ou igual à 3, previnindo que o usuário digite um texto ou um número inválido
-      if (sscanf(buffer, "%d", &dispositivo->prioridade) == 1 && (dispositivo->prioridade >= 1 || dispositivo->prioridade <= 3)) {
+      // Verificnado se é possível encontrar um valor do tipo int e se o valor é maior ou igual à 1 e menor ou igual à 3, previnindo que o usuário digite um texto ou um número inválido
+      if (sscanf(buffer, "%d", &dispositivo->prioridade) == 1 && (dispositivo->prioridade >= 1 && dispositivo->prioridade <= 3)) {
         break;
       }
 
