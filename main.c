@@ -116,7 +116,11 @@ void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
       printf("\nValor inválido! Informe um número positivo: ");
     }
 
-    printf("\nPrioridade do dispositivos (de 1 a 3): ");
+    printf("\nClassificação de prioridade\n");
+    printf("\n1 - Alta");
+    printf("\n2 - Média");
+    printf("\n3 - Baixa");
+    printf("\nPrioridade do dispositivo: ");
     while(1) {
       fgets(buffer, sizeof(buffer), stdin);
 
@@ -221,9 +225,11 @@ void trocarDispositivos(struct Dispositivo *a, struct Dispositivo *b) {
 // Função para ordenar dispositivos por prioridade usando bubble sort
 void ordenarDispositivosPorPrioridade(struct GerenciadorDeDispositivos *gerenciador) {
   // Se não houver dispositivos cadastrados a ordenação não é feita
-  if (gerenciador->quantidade <= 1) {
+  if (gerenciador->quantidade == 0) {
     printf("\nNão há nenhum dispositivo cadastrado\n");
     return;
+  } else if (gerenciador->quantidade <= 1) {
+    printf("\nNão há dispositivos o suficiente para serem ordenados\n");
   }
 
   printf("\n==============================================\n");
@@ -250,6 +256,11 @@ void sistemaRecomendacaoInteligente(struct GerenciadorDeDispositivos *gerenciado
   printf("\n==============================================\n");
   printf("         SISTEMA DE RECOMENDAÇÃO               \n");
   printf("==============================================\n");
+
+  if (gerenciador->quantidade == 0) {
+    printf("\nNão há nenhum dispositivo cadastrado\n");
+    return;
+  }
 
   printf("\nDigite a quantidade de energia disponível (em kWh): ");
   while(1) {
