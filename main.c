@@ -79,7 +79,7 @@ void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
       if (sscanf(buffer, "%f", &dispositivo->consumo_estimado) == 1) {
         break;
       }
-      printf("Valor inválido! Digite um número\n");
+      printf("\nValor inválido! Informe um número positivo: ");
     }
 
     printf("\nPrioridade do dispositivos (de 1 a 3): ");
@@ -91,7 +91,7 @@ void cadastrarDispositivo(struct GerenciadorDeDispositivos *gerenciador) {
         break;
       }
 
-      printf("Prioridade inválida! O nível de prioridade deve ser um número de 1 a 3\n");
+      printf("\nPrioridade inválida! O nível de prioridade deve ser um número de 1 a 3: ");
     }
 
     gerenciador->quantidade++;
